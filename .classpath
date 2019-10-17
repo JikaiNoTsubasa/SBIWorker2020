@@ -2,7 +2,11 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/SBIFrameWork_1.1.jar"/>
+	<classpathentry kind="lib" path="lib/SBIFrameWork_1.2.jar"/>
+	<classpathentry kind="lib" path="lib/ekit.jar"/>
 	<classpathentry kind="lib" path="lib/SHEF.jar"/>
+	<classpathentry kind="lib" path="lib/jtidy-8.0.jar"/>
+	<classpathentry kind="lib" path="lib/novaworx-syntax-0.0.7.jar"/>
+	<classpathentry kind="lib" path="lib/sam.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

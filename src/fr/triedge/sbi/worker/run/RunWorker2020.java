@@ -9,6 +9,7 @@ public class RunWorker2020 {
 		Controller c = new Controller();
 		c.init();
 		MainWindow w = new MainWindow(c);
+		c.setMainWindow(w);
 		w.build();
 	}
 

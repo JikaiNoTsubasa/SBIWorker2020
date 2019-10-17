@@ -9,13 +9,16 @@ import javax.swing.plaf.ColorUIResource;
 
 import fr.triedge.fwk.conf.Config;
 import fr.triedge.fwk.ui.UI;
+import fr.triedge.sbi.worker.ui.MainWindow;
 import fr.triedge.sbi.worker.utils.Const;
 
 
 public class Controller {
+	
+	private MainWindow mainWindow;
 
 	public void init() {
-		setUpLookAndFeel();
+		//setUpLookAndFeel();
 	}
 	
 	public void setUpLookAndFeel() {
@@ -37,9 +40,18 @@ public class Controller {
 		Config.params.put(Const.CONFIG_WORSPACE_LOCATION, file.getAbsolutePath());
 		try {
 			Config.save();
+			UI.info("Workspace switched to: "+file.getAbsolutePath());
 		} catch (IOException e) {
 			UI.error("Cannot save config", e);
 			e.printStackTrace();
 		}
+	}
+
+	public MainWindow getMainWindow() {
+		return mainWindow;
+	}
+
+	public void setMainWindow(MainWindow mainWindow) {
+		this.mainWindow = mainWindow;
 	}
 }
