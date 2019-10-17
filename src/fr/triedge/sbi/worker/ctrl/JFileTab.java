@@ -74,6 +74,8 @@ public class JFileTab extends JPanel{
 	
 	public void actionRenameFile() {
 		String newName = UI.askForTextInput("Edit File Name", "Name", getFile().getName());
+		if (newName == null || newName == "")
+			return;
 		File newFile = new File(getFile().getParentFile().getAbsolutePath()+File.separator+newName);
 		boolean res = Utils.renameFile(getFile(), newFile);
 		if (res) {

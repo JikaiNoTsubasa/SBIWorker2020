@@ -3,13 +3,9 @@ package fr.triedge.sbi.worker.ctrl;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -33,7 +29,7 @@ public class Ekit extends JPanel
 
 	private EkitCore ekitCore;
 
-	private File currentFile = (File)null;
+	//private File currentFile = (File)null;
 
 	/** Master Constructor
 	  * @param sDocument         [String]  A text or HTML document to load in the editor upon startup.

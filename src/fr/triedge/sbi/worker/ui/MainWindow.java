@@ -59,6 +59,7 @@ public class MainWindow extends JFrame{
 		setItemOpenNote(new JMenuItem("Open Note"));
 		
 		getItemChangeWorkspace().addActionListener(e -> actionChangeWorkspace());
+		getItemQuit().addActionListener(e -> actionExit());
 		getItemNewNote().addActionListener(e -> actionNewNote());
 		getItemOpenNote().addActionListener(e -> actionOpenNote());
 		
@@ -73,6 +74,10 @@ public class MainWindow extends JFrame{
 		setContentPane(getTabbedPane());
 		
 		setVisible(true);
+	}
+	
+	public void actionExit() {
+		System.exit(0);
 	}
 	
 	public void actionOpenNote() {
