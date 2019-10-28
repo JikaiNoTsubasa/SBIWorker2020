@@ -3,6 +3,8 @@ package fr.triedge.sbi.worker.ctrl;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -12,13 +14,15 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import fr.triedge.fwk.conf.Config;
 import fr.triedge.fwk.ui.UI;
+import fr.triedge.sbi.worker.utils.Const;
 import fr.triedge.sbi.worker.utils.Icons;
 import fr.triedge.sbi.worker.utils.Utils;
 import net.atlanticbb.tantlinger.shef.HTMLEditorPane;
 
 
-public class JFileTab extends JPanel{
+public class JFileTab extends JPanel implements KeyListener{
 
 	private static final long serialVersionUID = -4904346072633347314L;
 
@@ -28,6 +32,7 @@ public class JFileTab extends JPanel{
 	// https://www.javatips.net/api/EKit-for-SCIL-master/src/com/hexidec/ekit/Ekit.java
 	//private Ekit editor;
 	
+	// https://github.com/OpenIndex/OpenIndex-SHEF
 	// SHEF
 	private HTMLEditorPane editor;
 	private JButton btnSave, btnRenameFile;
@@ -121,7 +126,26 @@ public class JFileTab extends JPanel{
 			UI.error("Cannot save file", e);
 			e.printStackTrace();
 		}
-	     
+	}
+	
+	public void saveAsTemplate() {
+		String tplLoc = Config.params.getProperty(Const.CONFIG_TEMPLATE_LOCATION, "templates");
+		String newName = UI.askForTextInput("Template Name", "Name", "template1.tpl");
+		String pathToSave = tplLoc + File.separator+ newName;
+		if (!pathToSave.endsWith(".tpl"))
+			pathToSave = pathToSave+".tpl";
+		File f = new File(pathToSave);
+		String text = getEditor().getText();
+		BufferedWriter writer;
+		try {
+			writer = new BufferedWriter(new FileWriter(f.getAbsoluteFile()));
+			writer.write(text);
+			writer.close();
+			updateStatus("Saved to:" +f.getAbsoluteFile());
+		} catch (IOException e) {
+			UI.error("Cannot save file", e);
+			e.printStackTrace();
+		}
 	}
 
 	public File getFile() {
@@ -194,4 +218,22 @@ public class JFileTab extends JPanel{
 		}
 		
 	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		System.out.println("Pressed");
+		if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+            saveText();
+		}
+
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+	}
+
 }
