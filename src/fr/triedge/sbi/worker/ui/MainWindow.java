@@ -1,6 +1,9 @@
 package fr.triedge.sbi.worker.ui;
 
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
@@ -10,6 +13,7 @@ import java.util.Date;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -19,6 +23,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
@@ -28,6 +33,7 @@ import fr.triedge.fwk.ui.UI;
 import fr.triedge.sbi.worker.ctrl.Controller;
 import fr.triedge.sbi.worker.ctrl.JFileTab;
 import fr.triedge.sbi.worker.utils.Const;
+import fr.triedge.sbi.worker.utils.Icons;
 import fr.triedge.sbi.worker.utils.Utils;
 
 public class MainWindow extends JFrame implements WindowListener{
@@ -35,19 +41,19 @@ public class MainWindow extends JFrame implements WindowListener{
 	private static final long serialVersionUID = 7682997401062409201L;
 
 	private Controller controller;
-	
+
 	private JMenuBar bar;
 	private JMenu menuFile, menuNote, menuTemplate;
 	private JMenuItem itemQuit, itemChangeWorkspace, itemChangeTemplateLocation, itemNewNote, itemOpenNote, itemSaveAsTemplate;
-	
+
 	private JTabbedPane tabbedPane;
-	
+
 	public MainWindow(Controller controller) {
 		super();
 		this.controller = controller;
 		addWindowListener(this);
 	}
-	
+
 	public void build() {
 		try {
 			ImageIcon icon = new ImageIcon(ImageIO.read(new File(Const.ICONS_LOCATION+"/icon_bright.png")));
@@ -55,14 +61,14 @@ public class MainWindow extends JFrame implements WindowListener{
 		} catch (IOException e) {
 		}
 		setTitle("SBIWorker2020");
-		 setSize(
+		setSize(
 				Integer.valueOf(Config.params.getProperty(Const.CONFIG_FRAME_WIDTH, "800")),
 				Integer.valueOf(Config.params.getProperty(Const.CONFIG_FRAME_HEIGHT, "600")));
 		setExtendedState(Integer.valueOf(Config.params.getProperty(Const.CONFIG_FRAME_FULLSCREEN, "0")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setTabbedPane(new JTabbedPane());
-		
+
 		setBar(new JMenuBar());
 		setMenuFile(new JMenu("File"));
 		setMenuNote(new JMenu("Note"));
@@ -73,14 +79,14 @@ public class MainWindow extends JFrame implements WindowListener{
 		setItemOpenNote(new JMenuItem("Open Note"));
 		setItemSaveAsTemplate(new JMenuItem("Save as Template"));
 		setItemChangeTemplateLocation(new JMenuItem("Change Template Folder"));
-		
+
 		getItemChangeWorkspace().addActionListener(e -> actionChangeWorkspace());
 		getItemQuit().addActionListener(e -> actionExit());
 		getItemNewNote().addActionListener(e -> actionNewNote());
 		getItemOpenNote().addActionListener(e -> actionOpenNote());
 		getItemSaveAsTemplate().addActionListener(e -> actionSaveAsTemplate());
 		getItemChangeTemplateLocation().addActionListener(e -> actionChangeTemplateLocation());
-		
+
 		getMenuFile().add(getItemChangeWorkspace());
 		getMenuFile().add(getItemChangeTemplateLocation());
 		getMenuFile().add(getItemQuit());
@@ -91,12 +97,12 @@ public class MainWindow extends JFrame implements WindowListener{
 		getBar().add(getMenuNote());
 		getBar().add(getMenuTemplate());
 		setJMenuBar(getBar());
-		
+
 		setContentPane(getTabbedPane());
-		
+
 		setVisible(true);
 	}
-	
+
 	public void actionSaveAsTemplate() {
 		Component comp = getTabbedPane().getSelectedComponent();
 		if (comp instanceof JFileTab) {
@@ -106,21 +112,21 @@ public class MainWindow extends JFrame implements WindowListener{
 			UI.warn("Current tab is not instance of JFileTab, cannot save template");
 		}
 	}
-	
+
 	public void actionExit() {
 		this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 	}
-	
+
 	public void actionOpenNote() {
 		JFileChooser chooser = new JFileChooser(new File(Config.params.getProperty(Const.CONFIG_WORSPACE_LOCATION, "storage")));
 		chooser.setDialogTitle("Select note file");
 		chooser.setFileFilter(new FileFilter() {
-			
+
 			@Override
 			public String getDescription() {
 				return "Worker Note .wk";
 			}
-			
+
 			@Override
 			public boolean accept(File f) {
 				if (f.getName().endsWith(".wk"))
@@ -134,20 +140,58 @@ public class MainWindow extends JFrame implements WindowListener{
 			if (selectedFile != null) {
 				JFileTab tab = new JFileTab(selectedFile, getController());
 				tab.build();
-				getTabbedPane().addTab(selectedFile.getName(), tab);
-				getTabbedPane().setSelectedComponent(tab);
+				addTab(tab, selectedFile.getName());
+				// getTabbedPane().addTab(selectedFile.getName(), tab);
+				// getTabbedPane().setSelectedComponent(tab);
 			}
 		}
 	}
-	
+
+	public void addTab(JFileTab tab, String title) {
+		tab.build();
+		getTabbedPane().addTab(title, tab);
+		getTabbedPane().setSelectedComponent(tab);
+
+		int index = getTabbedPane().indexOfTab(title);
+		JPanel pnlTab = new JPanel(new GridBagLayout());
+		pnlTab.setOpaque(false);
+		JLabel lblTitle = new JLabel(title);
+		JButton btnClose = new JButton(Icons.closeIcon);
+		btnClose.setPreferredSize(new Dimension(12, 12));
+		btnClose.setBorderPainted(false); 
+		btnClose.setContentAreaFilled(false); 
+		btnClose.setFocusPainted(false);
+
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.weightx = 1;
+
+		pnlTab.add(lblTitle, gbc);
+
+		gbc.gridx++;
+		gbc.weightx = 0;
+		pnlTab.add(btnClose, gbc);
+
+		getTabbedPane().setTabComponentAt(index, pnlTab);
+
+		btnClose.addActionListener(e -> actionCloseTab(tab));
+	}
+
+	public void actionCloseTab(JFileTab tab) {
+		if (tab != null) {
+			getTabbedPane().remove(tab);
+		}
+	}
+
 	public void actionNewNote() {
 		// Get storage folder
 		String storage = Config.params.getProperty(Const.CONFIG_TEMPLATE_LOCATION, "templates");
-		
+
 		// List templates
 		File storageFolder = new File(storage);
 		File[] files = storageFolder.listFiles(new java.io.FileFilter() {
-			
+
 			@Override
 			public boolean accept(File pathname) {
 				if (pathname.getName().endsWith(".tpl"))
@@ -155,7 +199,7 @@ public class MainWindow extends JFrame implements WindowListener{
 				return false;
 			}
 		});
-		
+
 		String[] templateList = new String[files.length + 1];
 		templateList[0] = "None";
 		for (int i = 1; i < files.length +1; ++i)
@@ -163,10 +207,10 @@ public class MainWindow extends JFrame implements WindowListener{
 		JComboBox<String> comboTemplate = new JComboBox<>(templateList);
 		JTextField textName = new JTextField();
 		final JComponent[] inputs = new JComponent[] {
-		        new JLabel("Name"),
-		        textName,
-		        new JLabel("Template"),
-		        comboTemplate
+				new JLabel("Name"),
+				textName,
+				new JLabel("Template"),
+				comboTemplate
 		};
 		int result = JOptionPane.showConfirmDialog(null, inputs, "Note Name", JOptionPane.PLAIN_MESSAGE);
 		if (result == JOptionPane.OK_OPTION) {
@@ -179,7 +223,7 @@ public class MainWindow extends JFrame implements WindowListener{
 				String fileName = format.format(date)+"_"+txt+".wk";
 				File file = new File(storage+File.separator+fileName);
 				file.getParentFile().mkdirs();
-				
+
 				JFileTab tab = new JFileTab(file, getController());
 				tab.build();
 				if (!template.equals("None")) {
@@ -196,16 +240,17 @@ public class MainWindow extends JFrame implements WindowListener{
 						}
 					}
 				}
-				getTabbedPane().addTab(fileName, tab);
-				getTabbedPane().setSelectedComponent(tab);
+				addTab(tab, fileName);
+				// getTabbedPane().addTab(fileName, tab);
+				// getTabbedPane().setSelectedComponent(tab);
 			}else {
 				UI.error("No valid name entered!");
 			}
 		}
-		
-		
+
+
 	}
-	
+
 	public void setTitleTab(JFileTab tab, String name) {
 		int idx = getTabbedPane().getSelectedIndex();
 		getTabbedPane().setTitleAt(idx, name);
@@ -222,29 +267,29 @@ public class MainWindow extends JFrame implements WindowListener{
 			}
 		}
 		System.out.println("Cannot find element");
-		*/
+		 */
 	}
-	
+
 	public void actionChangeWorkspace() {
 		JFileChooser chooser = new JFileChooser(Config.params.getProperty(Const.CONFIG_WORSPACE_LOCATION, "storage"));
 		chooser.setDialogTitle("Select new workspace folder");
-	    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-	    chooser.setAcceptAllFileFilterUsed(false);
-	    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
-	    	File file = chooser.getSelectedFile();
-	    	getController().changeWorkspace(file);
-	    }
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		chooser.setAcceptAllFileFilterUsed(false);
+		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
+			File file = chooser.getSelectedFile();
+			getController().changeWorkspace(file);
+		}
 	}
-	
+
 	public void actionChangeTemplateLocation() {
 		JFileChooser chooser = new JFileChooser(Config.params.getProperty(Const.CONFIG_TEMPLATE_LOCATION, "templates"));
 		chooser.setDialogTitle("Select new template folder");
-	    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-	    chooser.setAcceptAllFileFilterUsed(false);
-	    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
-	    	File file = chooser.getSelectedFile();
-	    	getController().changeTemplateLocation(file);
-	    }
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		chooser.setAcceptAllFileFilterUsed(false);
+		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
+			File file = chooser.getSelectedFile();
+			getController().changeTemplateLocation(file);
+		}
 	}
 
 	public Controller getController() {

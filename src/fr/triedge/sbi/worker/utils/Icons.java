@@ -9,7 +9,7 @@ import javax.swing.ImageIcon;
 public class Icons {
 
 	public static ImageIcon renameIcon;
-	public static ImageIcon paletteIcon;
+	public static ImageIcon closeIcon;
 	public static ImageIcon layerIcon;
 	public static ImageIcon mapIcon;
 	public static ImageIcon fileIcon;
@@ -23,7 +23,7 @@ public class Icons {
 	static {
 		try {
 			renameIcon = new ImageIcon(ImageIO.read(new File(Const.ICONS_LOCATION+"/o_rename.png")));
-			//colorWheelIcon = new ImageIcon(ImageIO.read(new File(Const.ICONS_LOCATION+"/o_colorWheel.png")));
+			closeIcon = new ImageIcon(ImageIO.read(new File(Const.ICONS_LOCATION+"/o_close.png")));
 			//refreshIcon = new ImageIcon(ImageIO.read(new File(Const.ICONS_LOCATION+"/o_refresh.png")));
 			saveIcon = new ImageIcon(ImageIO.read(new File(Const.ICONS_LOCATION+"/o_save.png")));
 			//paletteIcon = new ImageIcon(ImageIO.read(new File(Const.ICONS_LOCATION+"/o_palette.png")));
