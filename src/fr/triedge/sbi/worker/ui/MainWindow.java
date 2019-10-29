@@ -148,7 +148,7 @@ public class MainWindow extends JFrame implements WindowListener{
 	}
 
 	public void addTab(JFileTab tab, String title) {
-		tab.build();
+		// tab.build();
 		getTabbedPane().addTab(title, tab);
 		getTabbedPane().setSelectedComponent(tab);
 
@@ -186,10 +186,11 @@ public class MainWindow extends JFrame implements WindowListener{
 
 	public void actionNewNote() {
 		// Get storage folder
-		String storage = Config.params.getProperty(Const.CONFIG_TEMPLATE_LOCATION, "templates");
+		String storageTemplate = Config.params.getProperty(Const.CONFIG_TEMPLATE_LOCATION, "templates");
+		String storage = Config.params.getProperty(Const.CONFIG_WORSPACE_LOCATION, "storage");
 
 		// List templates
-		File storageFolder = new File(storage);
+		File storageFolder = new File(storageTemplate);
 		File[] files = storageFolder.listFiles(new java.io.FileFilter() {
 
 			@Override
@@ -232,12 +233,15 @@ public class MainWindow extends JFrame implements WindowListener{
 					if (f.exists()) {
 						try {
 							String text = Utils.readFile(f);
-							if (text != null)
+							if (text != null) {
 								tab.getEditor().setText(text);
+							}
 						} catch (IOException e) {
 							UI.error("Cannot read file", e);
 							e.printStackTrace();
 						}
+					}else {
+						UI.warn("Template could not be loaded, verify path: "+f.getAbsolutePath());
 					}
 				}
 				addTab(tab, fileName);
